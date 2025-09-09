@@ -24,21 +24,7 @@ workflow GENOME_ANNOTATION {
     ch_versions = ch_versions.mix(CCTYPER.out.versions)
 
     //VIRSORTER2
-    if ( !params.virsorter_db & !workflow.containerEngine ) {
-        date = new Date()
-        date_ymd = date.format("yyyyMMdd")
-        db_prefix = "virsorter2_db"
-        db_name = [db_prefix, date_ymd].join('_')
-        ch_db_meta = [id:db_name]
-        VIRSORTER2_SETUP(ch_db_meta)
-
-        ch_db_path = VIRSORTER2_SETUP.out.db
-        ch_versions = ch_versions.mix(VIRSORTER2_SETUP.out.versions)
-    } 
-    else {
-        ch_db_path = []
-    }
-    VIRSORTER2_RUN(genome, ch_db_path)
+    VIRSORTER2_RUN(genome)
     ch_versions = ch_versions.mix(VIRSORTER2_RUN.out.versions)
     VIRSORTER2_GFF_CONVERSION(VIRSORTER2_RUN.out.boundary)
     virsorter2_gff = VIRSORTER2_GFF_CONVERSION.out.gff
@@ -50,8 +36,8 @@ workflow GENOME_ANNOTATION {
     mobsuite_gff = MOBSUITE_GFF_CONVERSION.out.gff
     
     emit:
-        cctyper_gff
-        virsorter2_gff
-        mobsuite_gff
-        versions = ch_versions
+        cctyper_gff     = cctyper_gff
+        virsorter2_gff  = virsorter2_gff
+        mobsuite_gff    = mobsuite_gff
+        versions        = ch_versions
 }

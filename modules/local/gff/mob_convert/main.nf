@@ -2,7 +2,9 @@ process MOBSUITE_GFF_CONVERSION {
     tag "$samplesheet"
     label 'process_single'
 
-    container 'oras://community.wave.seqera.io/library/pip_bio_pandas:0fe569cb5ffacb61'
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/mulled-v2-e25d1fa2bb6cbacd47a4f8b2308bd01ba38c5dd7:75310f02364a762e6ba5206fcd11d7529534ed6e-0' :
+        'biocontainers/mulled-v2-e25d1fa2bb6cbacd47a4f8b2308bd01ba38c5dd7:75310f02364a762e6ba5206fcd11d7529534ed6e-0' }"
 
     input:
     tuple val(meta), path(tool_output)
